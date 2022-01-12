@@ -3,7 +3,8 @@ class ETF:
         self.data = data
 
     def simpleReturn(self, t, m):
-        r = self.data[1, t] / self.data[1, t - m] - 1
+        self.data[t - m]
+        r = (self.data[t] / self.data[t - m]) - 1
         return r
 
     def posinegaCal(self, tplusone):
@@ -13,3 +14,4 @@ class ETF:
             y = 1
         elif (rplusone < 0):
             y = 0
+        return y
