@@ -8,9 +8,9 @@ class ETF:
 
     def positionReturn(self, t, d):
         if d == 1:
-            return self.simpleReturn(t,1)
+            return self.simpleReturn(t, 1)
         if d == 0:
-            return self.simpleReturn(t,1)*(-1)
+            return self.simpleReturn(t, 1) * (-1)
 
     def posinegaCal(self, tplusone):
         rplusone = self.simpleReturn(tplusone, 1)
@@ -21,7 +21,7 @@ class ETF:
             y = 0
         return y
 
-    def DPR(self, t, d, commission = 0.0006):
+    def DPR(self, t, d, commission=0.0006):
         return self.positionReturn(t, d) - commission
 
     def CPR(self, DPR, t):
@@ -32,4 +32,3 @@ class ETF:
             pro.append(p)
             res.append(p - 1)
         return res
-

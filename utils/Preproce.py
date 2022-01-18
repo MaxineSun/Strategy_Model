@@ -23,5 +23,5 @@ class Preproce:
             train_label = torch.FloatTensor(self.targ[i + 2 * self.testSize:i + 3 * self.testSize])
             inout.append((train_seq, train_label))
         test_feature = torch.FloatTensor(self.feature[L - 3 * self.testSize:L - self.testSize])
-        test_trag = torch.FloatTensor(self.targ[L-self.testSize:])
+        test_trag = torch.FloatTensor(self.targ[L - self.testSize:])
         return inout, test_feature, test_trag, num
