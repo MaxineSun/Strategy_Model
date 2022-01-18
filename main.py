@@ -3,6 +3,7 @@ from utils.ETF import ETF
 from utils.Preproce import Preproce
 from utils.lstm import LSTM
 import torch
+import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -24,14 +25,14 @@ if __name__ == '__main__':
         feature25.append(tem)
 
     data = Preproce(feature25, yst, 250)
-    inout, test_feature, test_trag = data.dataSplit()
+    inout, test_feature, test_trag, num = data.dataSplit()
     model = LSTM()
-    loss_function = torch.nn.MSELoss()
+    loss_function = torch.nn.BCELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     print(model)
 
-    epochs = 25
+    epochs = 20
 
     for i in range(epochs):
         for seq, labels in inout:
@@ -58,7 +59,61 @@ if __name__ == '__main__':
 
         test_pred = model(test_feature)
     test_pred = torch.where(test_pred > 0.5, 1, 0)
-    print(loss_function(test_pred, test_trag))
+
+    ## evaluation of predict result
+    print("")
+    TP = 0
+    FP = 0
+    FN = 0
+    TN = 0
+    TPR = []
+    FPR = []
+    PRE = []
+    REC = []
+    test_pred = list(test_pred)
+    test_trag = list(test_trag)
+    for i in range(250):
+        if test_pred[i] == 1:
+            if test_trag == 1:
+                TP += 1
+            else:
+                FP += 1
+        if test_pred[i] == 0:
+            if test_trag[i] == 1:
+                FN += 1
+            else:
+                TN += 1
+        TPR.append(TP/max((TP+FN), 0.000001))
+        FPR.append(FP/max((FP+TN), 0.000001))
+        PRE.append(TP/max((TP+FP), 0.000001))
+        # REC.append(TP/(TP+FN))
+    acc = (TP + TN)/250
+    prec = TP/max((TP + FP), 0.000001)
+    recall = TP/max((TP + FN), 0.00001)
+    f1 = 2 * prec *recall/(max(prec + recall, 0.000001))
+    plt.plot(FPR, TPR)
+    plt.title("ROC_Curve")
+    plt.xlabel("FPR")
+    plt.ylabel("TPR")
+    plt.show()
+    plt.plot(PRE,TPR)
+    plt.title("PR_Curve")
+    plt.xlabel("PRE")
+    plt.ylabel("REC")
+    plt.show()
+
+    ## backtest simulation
+    dailyReturn = []
+    for i in range(250):
+        d = ETFdata.positionReturn(120+250*(num-1) + i,test_pred[i-1])
+        dailyReturn.append(d)
+
+    cumulatReturn = ETFdata.CPR(dailyReturn,250)
+    plt.plot(cumulatReturn)
+    plt.xlabel("Cumulative portfolio return")
+    plt.ylabel("time")
+    plt.show()
+    print("")
 
 
 

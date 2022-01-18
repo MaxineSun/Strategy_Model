@@ -14,7 +14,7 @@ class Preproce:
         self.feature = self.Data_feature[:self.testSize * num, :]
         self.targ = self.Data_targ[:self.testSize * num]
 
-        scaler = MinMaxScaler(feature_range=(-1, 1))
+        scaler = MinMaxScaler(feature_range=(-5, 5))
         self.feature = scaler.fit_transform(self.feature)
         inout = []
         L = len(self.feature)
@@ -24,4 +24,4 @@ class Preproce:
             inout.append((train_seq, train_label))
         test_feature = torch.FloatTensor(self.feature[L - 3 * self.testSize:L - self.testSize])
         test_trag = torch.FloatTensor(self.targ[L-self.testSize:])
-        return inout, test_feature, test_trag
+        return inout, test_feature, test_trag, num

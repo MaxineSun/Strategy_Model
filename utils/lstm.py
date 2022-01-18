@@ -15,7 +15,7 @@ class LSTM(torch.nn.Module):
 
     def forward(self, input_seq):
         lstm_out, self.hidden_cell = self.lstm(input_seq.view(len(input_seq), 1, -1), self.hidden_cell)
-        # S = torch.nn.Sigmoid()
-        predictions = self.linear(lstm_out.view(len(input_seq), -1))
-        # predictions = torch.where(predictions >= 0.3, 1, 0)
+        S = torch.nn.Sigmoid()
+        predictions = S(self.linear(lstm_out.view(len(input_seq), -1)))
+        # predictions = torch.where(predictions > 0.5, 1, 0)
         return predictions[-1]
